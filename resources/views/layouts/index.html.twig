@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css"/>
+
+
+
+    <link rel="stylesheet" href="/css/styles.css" />
+
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">{{ block('title') }}</a>
+
+    <ul class="navbar-nav mr-auto">
+    </ul>
+    <div class="pull-right" id="navbarsExampleDefault">
+        {% if (isAdmin == true) %}
+            <form class="form-inline my-2 my-lg-0" method="POST" action="/logout">
+                <span style="color: white; padding-right: 15px;">Admin</span>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
+            </form>
+        {% else %}
+            <form class="form-inline my-2 my-lg-0" method="POST" action="/login">
+                <input class="form-control mr-sm-2" type="text" name="login" placeholder="Login" aria-label="Login">
+                <input class="form-control mr-sm-2" type="text" name="password" placeholder="Password" aria-label="Password">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
+            </form>
+        {% endif %}
+    </div>
+</nav>
+
+<main role="main" class="container">
+    {% block content %}{% endblock %}
+</main><!-- /.container -->
+
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-1.12.4.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+
+
+{% block javascripts %}{% endblock %}
+
+</body>
+</html>
