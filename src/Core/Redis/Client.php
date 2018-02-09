@@ -23,6 +23,7 @@ class Client
     {
         $redisString = $config->getRedisString();
         $this->client = new \Redis();
+        $this->client->connect($redisString[0], isset($redisString[1]) ? $redisString[1] : null);
     }
 
 

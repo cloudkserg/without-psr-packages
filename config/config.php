@@ -2,7 +2,7 @@
 $rootPath = dirname(__DIR__);
 
 return [
-    'redis.string' => 'tcp://127.0.0.1:6379',
+    'redis.string' => ['127.0.0.1', '6379'],
 
     'log.path' => $rootPath . '/runtime/logs/application.log',
 
