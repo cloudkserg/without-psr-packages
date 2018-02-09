@@ -22,9 +22,8 @@ class IndexRequest
 
 
 
-    public function __construct(ServerRequestInterface $request)
+    public function __construct(array $query)
     {
-        $query = $request->getQueryParams();
 
         $this->format = new Format(Format::JSON);
         if (isset($query['format'])) {

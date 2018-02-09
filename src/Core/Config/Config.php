@@ -11,41 +11,31 @@ namespace Src\Core\Config;
 
 class Config
 {
+    const REDIS_KEY = 'redis.string';
 
-    const PROD_MODE = 'production';
-    const MIDDLEWARE_KEY = 'middlewares';
-    const ROUTES_KEY = 'routes';
-
-    private $config;
+    private $config = [];
 
     public function __construct(string $configPath)
     {
-        $this->config = new \Noodlehaus\Config($configPath);
+        if (!file_exists($configPath)) {
+            throw new \Exception('not exist config');
+        }
+        $this->config = require($configPath);
     }
 
     public function get($name, $default = null)
     {
-        return $this->config->get($name, $default);
+        if (!isset($this->config[$name])) {
+            return $default;
+        }
+        return $this->config[$name];
     }
 
-    public function getMiddlewares()
-    {
-        return $this->config->get(self::MIDDLEWARE_KEY, []);
-    }
 
-    public function getRoutes()
-    {
-        return $this->config->get(self::ROUTES_KEY, []);
-    }
-
-    public function isDev()
-    {
-        return (getenv('ENV') !== self::PROD_MODE);
-    }
 
     public function getRedisString()
     {
-        return getenv('REDIS_STRING');
+        return $this->get(self::REDIS_KEY);
     }
 
 

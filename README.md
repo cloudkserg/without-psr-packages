@@ -1,13 +1,12 @@
 # INSTALL
 
-1) Create .env file from .env.dist
-Write connection settings to redis as string (as string in library predis/predis) 
+1) Change parameters as needed in config/config.php
 
 2) Create rights 777 on catalogues
 runtime/
 
 3) Install dependencies 
-composer install 
+php need install php-redis on system
 
 4) Run dev server
 cd public;  php -S 127.0.0.1:3002 -t .

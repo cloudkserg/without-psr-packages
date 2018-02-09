@@ -9,25 +9,16 @@
 namespace Src\Core\Log;
 
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-use Psr\Log\LoggerInterface;
+
 use Src\Core\Config\Config;
 
 class LoggerFactory
 {
-    const LOGGER_NAME = 'default';
-    const LOG_LEVEL_PARAM = 'log.level';
     const LOG_PATH_PARAM = 'log.path';
     
-    public static function create(Config $config) : LoggerInterface
+    public static function create(Config $config) : Logger
     {
-        $logger =  new Logger(self::LOGGER_NAME);
-        $logger->pushHandler(new StreamHandler(
-            $config->get(self::LOG_PATH_PARAM),
-            $config->get(self::LOG_LEVEL_PARAM)
-        ));
-
+        $logger =  new Logger($config->get(self::LOG_PATH_PARAM));
         return $logger;
     }
 

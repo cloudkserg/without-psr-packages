@@ -9,7 +9,6 @@
 namespace Src\Request;
 
 
-use Psr\Http\Message\ServerRequestInterface;
 use Src\Core\Exception\ValidateException;
 use Src\Model\Event;
 
@@ -22,9 +21,9 @@ class IncrementRequest
     private $event;
 
 
-    public function __construct(ServerRequestInterface $request)
+    public function __construct(string $post)
     {
-        $params = $this->parse($request->getBody()->getContents());
+        $params = $this->parse($post);
 
         $this->country = $params['country'];
         $this->event = new Event($params['event']);

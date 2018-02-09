@@ -38,7 +38,7 @@ class CounterService
 
     public function incrementsCounter(string $country, Event $event)
     {
-        $currentDate = new Carbon();
+        $currentDate = new \DateTime();
         $this->totalRepo->incrementsTotalCounter($country, $event);
         $this->repo->incrementsLastCounter($country, $event);
         $this->repo->incrementsDateCounter($country, $event, $currentDate);
@@ -59,7 +59,8 @@ class CounterService
     public function deleteExpiredDateCounters()
     {
         $lastDaysLimit = $this->repo->getLastDaysLimit();
-        $date = Carbon::create()->subDays($lastDaysLimit);
+        $date = new \DateTime();
+        $date->sub(new \DateInterval('P' . $lastDaysLimit . 'D'));
         $this->repo->decrDateCounters($date);
     }
 

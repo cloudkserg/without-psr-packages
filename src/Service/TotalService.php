@@ -47,7 +47,8 @@ class TotalService
         $limitTopCountries = (int)$this->config->get(self::MAX_COUNTRIES_CONFIG) - 1;
 
 
-        return collect(Event::createTypes())->reduce(
+        return array_reduce(
+            Event::createTypes(),
             function (array $eventCountries, Event $event) use ($limitTopCountries) {
                 return array_merge($eventCountries,
                     $this->totalRepo->getEventCountries($event, $limitTopCountries)

@@ -1,20 +1,24 @@
 <?php
 $rootPath = dirname(__DIR__);
-require_once($rootPath . '/vendor/autoload.php');
 
-//load environment
-$dotenv = new Dotenv\Dotenv($rootPath);
-$dotenv->load();
+spl_autoload_register(function ($class) use ($rootPath) {
+    $file = str_replace('\\', DIRECTORY_SEPARATOR, $class).'.php';
+    $file = $rootPath . '/' . str_replace('Src', 'src', $file);
+    if (file_exists($file)) {
+        require $file;
+        return true;
+    }
+    return false;
+});
+
 
 //load config
 $config = new \Src\Core\Config\Config($rootPath . '/config/config.php');
 
-//dependencyInjection container
-$container = (new \Src\DI\ContainerFactory())->create($config);
 
-//core
-$app = new \Src\Core\Application($container);
-$app->listen();
+$logger = \Src\Core\Log\LoggerFactory::create($config);
+$application = new \Src\Core\Application($logger, $config);
+$application->listen();
 
 
 

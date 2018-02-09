@@ -9,18 +9,16 @@
 namespace Src\Action;
 
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
+use Src\Core\Response\CsvResponse;
+use Src\Core\Response\JsonResponse;
+use Src\Core\Response\ResponseInterface;
 use Src\Formatter\CountriesFormatter;
 use Src\Model\Format;
 use Src\Request\IndexRequest;
 use Src\Service\CounterService;
 use Src\Service\TotalService;
-use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\Response\TextResponse;
 
-class IndexAction implements RequestHandlerInterface
+class IndexAction
 {
     /**
      * @var CounterService
@@ -44,16 +42,16 @@ class IndexAction implements RequestHandlerInterface
     }
 
 
-    public function handle(ServerRequestInterface $request): ResponseInterface
+    public function handle(array $get) : ResponseInterface
     {
-        $format = (new IndexRequest($request))->getFormat();
+        $format = (new IndexRequest($get))->getFormat();
         $topEventCountries = $this->totalService->getTopEventCountries();
         $counters = $this->service->getLastCounters($topEventCountries);
 
         if ($format->isJson()) {
             return new JsonResponse($this->formatter->format($counters));
         }
-        return new TextResponse($this->formatter->formatCsv($counters));
+        return new CsvResponse($this->formatter->formatCsv($counters));
 
     }
 

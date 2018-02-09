@@ -9,9 +9,8 @@
 namespace Src\Repository;
 
 
-use Carbon\Carbon;
-use Predis\Client;
 use Src\Core\Config\Config;
+use Src\Core\Redis\Client;
 use Src\Model\Counter;
 use Src\Model\Event;
 use Src\Model\EventCountry;
@@ -55,12 +54,12 @@ class CounterRepository
     {
         return sprintf(self::LAST_KEY, $country, (string)$event);
     }
-    private function getDateKey(string $country, $event, Carbon $date)
+    private function getDateKey(string $country, $event, \DateTime $date)
     {
-        return sprintf(self::DATE_KEY, $country, (string)$event, $date->toDateString());
+        return sprintf(self::DATE_KEY, $country, (string)$event, $date->getTimestamp());
     }
 
-    public function incrementsDateCounter(string $country, Event $event, Carbon $date)
+    public function incrementsDateCounter(string $country, Event $event, \DateTime $date)
     {
         $key = $this->getDateKey($country, $event, $date);
         $this->client->incr($key);
@@ -79,14 +78,14 @@ class CounterRepository
 
     private function getLastCounterKeys(array $topCountries) : array
     {
-        return collect($topCountries)->map(function (EventCountry $country) {
+        return array_map(function (EventCountry $country) {
             return $this->getLastKey($country->getCountry(), $country->getEvent());
-        })->toArray();
+        }, $topCountries);
     }
 
 
 
-    private function getDateKeys(Carbon $date) : array
+    private function getDateKeys(\DateTime $date) : array
     {
         return $this->client->keys($this->getDateKey('*', '*', $date));
     }
@@ -94,13 +93,11 @@ class CounterRepository
 
     private function buildCounters(array $eventCountries, array $values) : array
     {
-        return collect($eventCountries)->map(
-            function (EventCountry $eventCountry, $countryIndex) use ($values) {
-                return new Counter(
-                    $eventCountry->getEvent(), $eventCountry->getCountry(), $values[$countryIndex]
-                );
-            }
-        )->toArray();
+        return array_map(function (EventCountry $eventCountry, $countryIndex) use ($values) {
+            return new Counter(
+                $eventCountry->getEvent(), $eventCountry->getCountry(), $values[$countryIndex]
+            );
+        }, $eventCountries, array_keys($eventCountries));
     }
 
     /**
@@ -118,7 +115,7 @@ class CounterRepository
 
     }
 
-    public function decrDateCounters(Carbon $date)
+    public function decrDateCounters(\DateTime $date)
     {
         $dateKeys = $this->getDateKeys($date);
         if (empty($dateKeys)) {
@@ -126,12 +123,12 @@ class CounterRepository
         }
 
         $dateValues = $this->client->mget($dateKeys);
-        collect($dateKeys)->each(function ($dateKey, $dateIndex) use ($dateValues) {
+        foreach ($dateKeys as $dateIndex => $dateKey) {
             $counter = $this->buildDateCounter($dateKey, $dateValues[$dateIndex]);
 
             $lastKey = $this->getLastKey($counter->getCountry(), $counter->getEvent());
             $this->client->decrby($lastKey, $counter->getCount());
-        });
+        }
     }
 
     private function buildDateCounter(string $dateKey, $value) : Counter

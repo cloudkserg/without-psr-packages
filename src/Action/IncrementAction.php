@@ -9,14 +9,12 @@
 namespace Src\Action;
 
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
+use Src\Core\Response\JsonResponse;
+use Src\Core\Response\ResponseInterface;
 use Src\Request\IncrementRequest;
 use Src\Service\CounterService;
-use Zend\Diactoros\Response\JsonResponse;
 
-class IncrementAction implements RequestHandlerInterface
+class IncrementAction
 {
     /**
      * @var CounterService
@@ -29,9 +27,9 @@ class IncrementAction implements RequestHandlerInterface
     }
 
 
-    public function handle(ServerRequestInterface $request): ResponseInterface
+    public function handle($post) : ResponseInterface
     {
-        $request = new IncrementRequest($request);
+        $request = new IncrementRequest($post);
         $this->service->incrementsCounter($request->getCountry(), $request->getEvent());
 
 

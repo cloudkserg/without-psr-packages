@@ -12,56 +12,42 @@ namespace Src\Core;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Src\Core\Config\Config;
+use Src\Core\DI\Container;
+use Src\Core\Log\Logger;
 
 class Application
 {
 
+
+
+
+    /**
+     * @var Logger
+     */
+    private $logger;
     /**
      * @var Config
      */
     private $config;
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
 
-    /**
-     * @var MiddlewareDispatcher
-     */
-    private $dispatcher;
-
-    /**
-     * Application constructor.
-     * @param ContainerInterface $container
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     */
-    public function __construct(ContainerInterface $container)
+    public function __construct(Logger $logger, Config $config)
     {
-        $this->container = $container;
-        $this->config = $container->get(Config::class);
-        $this->logger = $container->get(LoggerInterface::class);
-
-        $this->dispatcher = $this->container->get(MiddlewareDispatcher::class);
+        $this->logger = $logger;
+        $this->config = $config;
     }
 
 
     public function listen()
     {
-        if ($this->config->isDev()) {
-            error_reporting(E_ALL ^ E_NOTICE);
-            ini_set('display_errors', true);
+        $container = new Container($this->config);
+        $dispatcher = new WebDispatcher($container);
+        try {
+            $dispatcher->dispatch();
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage() . ": " . $e->getTraceAsString());
+            throw $e;
         }
-
-
-        $server = \Zend\Diactoros\Server::createServer($this->dispatcher, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
-        $server->listen();
-
     }
 
 }

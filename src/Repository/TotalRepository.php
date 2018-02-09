@@ -10,9 +10,8 @@ namespace Src\Repository;
 
 
 
-use Predis\Client;
-use Src\Collection\TopCountryCollection;
-use Src\Core\Config\Config;
+
+use Src\Core\Redis\Client;
 use Src\Model\Event;
 use Src\Model\EventCountry;
 
@@ -57,9 +56,9 @@ class TotalRepository
 
     private function buildEventCountries(Event $event, array $countries) : array
     {
-        return collect($countries)->map(function ($country) use ($event) {
+        return array_map(function ($country) use ($event) {
             return new EventCountry($event, $country);
-        })->toArray();
+        }, $countries);
     }
 
 }
