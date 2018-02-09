@@ -20,13 +20,13 @@ class CountriesFormatter
      */
     public function format(array $counters) : array
     {
-        return collect($counters)->map(function (Counter $counter) {
+        return array_map(function (Counter $counter) {
             return [
                 'event' => (string)$counter->getEvent(),
                 'country' => $counter->getCountry(),
                 'count' => (int)$counter->getCount()
             ];
-        })->toArray();
+        }, $counters);
     }
 
     /**
@@ -35,7 +35,7 @@ class CountriesFormatter
      */
     public function formatCsv(array $counters) : string
     {
-        return collect($counters)->reduce(function (string $output, Counter $counter) {
+        return array_reduce($counters, function (string $output, Counter $counter) {
             return $output . sprintf("%s,%s,%s\n",
                 (string)$counter->getEvent(),
                 $counter->getCountry(),
