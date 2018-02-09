@@ -47,7 +47,7 @@ class WebDispatcher
     private function callPost() : ResponseInterface
     {
         $action = new IncrementAction($this->container->getCounterService());
-        return $action->handle($_POST[]);
+        return $action->handle($_POST);
     }
 
     private function callGet() : ResponseInterface
@@ -60,7 +60,7 @@ class WebDispatcher
             $this->container->getTotalService(),
             $formatter
         );
-        return $action->handle($_GET[]);
+        return $action->handle($_GET);
     }
 
 }
