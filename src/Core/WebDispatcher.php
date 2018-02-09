@@ -47,7 +47,7 @@ class WebDispatcher
     private function callPost() : ResponseInterface
     {
         $action = new IncrementAction($this->container->getCounterService());
-        return $action->handle($_POST);
+        return $action->handle(file_get_contents('php://input'));
     }
 
     private function callGet() : ResponseInterface

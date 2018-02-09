@@ -46,6 +46,8 @@ class Application
             $dispatcher->dispatch();
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage() . ": " . $e->getTraceAsString());
+            http_response_code(404);
+            echo "Page not found";
             throw $e;
         }
     }
