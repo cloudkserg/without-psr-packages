@@ -22,7 +22,7 @@ class Event
 
     public static function createTypes() : array
     {
-        return array_map(function ($type) { return new self($type); }, self::createTypes());
+        return array_map(function ($type) { return new self($type); }, self::TYPES);
     }
 
     public function __construct($type)
