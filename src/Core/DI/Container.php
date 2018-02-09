@@ -51,10 +51,9 @@ class Container
     public function getTotalService(): TotalService
     {
         $redis = $this->getRedis();
-        $counterRepo = new CounterRepository($redis, $this->config);
         $totalRepo = new TotalRepository($redis);
 
-        return new CounterService($counterRepo, $totalRepo);
+        return new TotalService($totalRepo, $this->config);
     }
 
 
